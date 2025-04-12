@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+    <script src="../assets/js/color-modes.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BELAJAR MEMBACA</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/style.css" rel="stylesheet">
+
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: repeat(4, 80px);
+            gap: 2px;
+            justify-content: center;
+            margin-bottom: 30px;
+            border: 3px solid purple;
+            padding: 5px;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .cell {
+            border: 1px solid black;
+            background-color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .locked {
+            background-color: #ddd;
+            font-weight: bold;
+
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .choice {
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            width: 100%;
+            height: 100%;
+            line-height: 50px;
+            text-align: center;
+            cursor: grab;
+            user-select: none;
+            padding: 10px;
+        }
+
+        .B {
+            background-color: #1abc9c;
+        }
+
+        .D {
+            background-color: #3498db;
+        }
+
+        .P {
+            background-color: #9b59b6;
+        }
+
+        .Q {
+            background-color: #e67e22;
+        }
+
+        .M {
+            background-color: #e74c3c;
+        }
+
+        .N {
+            background-color: #2ecc71;
+        }
+
+        .N {
+            background-color: #82cc2e;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div class="row justify-content-center align-items-center mt-5">
+                <div class="d-flex flex-wrap align-items-center justify-content-between w-100">
+                    <div class="gambar-wrapper" onclick="toggleMute()">
+                        <img src="assets/icon/high-volume.png" alt="Volume" width="50vh" class="gambar-shadow"
+                            id="volumeImage">
+                    </div>
+
+                    <!-- Background Music -->
+                    <audio id="audioPlayerbg" autoplay loop>
+                        <source src="assets/music/bg.wav" type="audio/wav">
+                        Browser Anda tidak mendukung elemen audio.
+                    </audio>
+
+                    <h1 class="mx-auto">MENGENAL HURUF</h1>
+
+                    <a href="javascript:history.back()">
+                        <div class="gambar-wrapper">
+                            <img src="assets/icon/back.png" alt="Kembali" width="50vh" class="gambar-shadow"
+                                id="backImage">
+                        </div>
+                    </a>
+
+                    <a href="/dashboard.html">
+                        <div class="gambar-wrapper">
+                            <img src="assets/icon/home.png" alt="Beranda" width="50vh" class="gambar-shadow"
+                                id="homeImage">
+                        </div>
+                    </a>
+                </div>
+
+                <div class="text-center mb-5">
+                    <img src="assets/img/title-membaca.png" class="gambar-title" alt="Judul Game" width="1000vh">
+                    <br>
+                    <h2>Selamat datang <span id="userName"></span> dari sekolah <span id="userSchool"></span>!</h2>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h1>MENGENAL HURUF</h1>
+                    <h4>Skor: <span id="score">0</span></h4>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="board" id="gameBoard">
+                            <!-- Baris 1 -->
+                            <div class="cell B locked" data-key="b">B</div>
+                            <div class="cell" data-key="b" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="b" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                            <!-- Baris 2 -->
+                            <div class="cell D locked" data-key="d">D</div>
+                            <div class="cell" data-key="d" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="d" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                            <!-- Baris 3 -->
+                            <div class="cell M locked" data-key="m">M</div>
+                            <div class="cell" data-key="m" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="m" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                            <!-- Baris 4 -->
+                            <div class="cell N locked" data-key="n">N</div>
+                            <div class="cell" data-key="n" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="n" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                            <!-- Baris 4 -->
+                            <div class="cell P locked" data-key="p">P</div>
+                            <div class="cell" data-key="p" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="p" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                            <!-- Baris 4 -->
+                            <div class="cell Q locked" data-key="q">Q</div>
+                            <div class="cell" data-key="q" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                            <div class="cell" data-key="q" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="choices">
+                            <div class="choice B" draggable="true" ondragstart="drag(event)" id="b1">b</div>
+                            <div class="choice P" draggable="true" ondragstart="drag(event)" id="p1">p</div>
+                            <div class="choice D" draggable="true" ondragstart="drag(event)" id="d1">d</div>
+                            <div class="choice B" draggable="true" ondragstart="drag(event)" id="b2">b</div>
+                            <div class="choice Q" draggable="true" ondragstart="drag(event)" id="q2">q</div>
+                            <div class="choice P" draggable="true" ondragstart="drag(event)" id="p2">p</div>
+                            <div class="choice M" draggable="true" ondragstart="drag(event)" id="m1">m</div>
+                            <div class="choice N" draggable="true" ondragstart="drag(event)" id="n1">n</div>
+                            <div class="choice Q" draggable="true" ondragstart="drag(event)" id="q1">q</div>
+                            <div class="choice D" draggable="true" ondragstart="drag(event)" id="d2">d</div>
+                            <div class="choice M" draggable="true" ondragstart="drag(event)" id="m2">m</div>
+                            <div class="choice N" draggable="true" ondragstart="drag(event)" id="n2">n</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio -->
+                <audio id="correctSound" src="assets/sounds/correct.mp3"></audio>
+                <audio id="wrongSound" src="assets/sounds/wrong.mp3"></audio>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pop-up Notification -->
+    <div id="notification" class="alert" style="position: fixed; bottom: 10px; right: 10px; display: none;">
+        <strong id="notification-message"></strong>
+    </div>
+
+    <script>
+        let score = 0;
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const dragged = document.getElementById(data);
+            const cell = ev.target;
+
+            const droppedLetter = dragged.innerText.trim();
+            const expectedKey = cell.getAttribute("data-key");
+
+            if (cell.innerHTML.trim() === "" && droppedLetter === expectedKey) {
+                cell.appendChild(dragged);
+                cell.style.backgroundColor = "#90ee90"; // hijau
+                document.getElementById("correctSound").play();
+
+                // Tambah skor
+                score += 100;
+                document.getElementById("score").innerText = score / 12;
+            } else {
+                document.getElementById("wrongSound").play();
+                alert("Huruf salah atau tidak boleh di-drop di sini!");
+            }
+        }
+    </script>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

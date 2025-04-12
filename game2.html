@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BELAJAR MEMBACA</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: repeat(4, 100px);
+            gap: 2px;
+            justify-content: center;
+            margin-bottom: 30px;
+            border: 3px solid purple;
+            padding: 5px;
+            max-width: 100%;
+        }
+
+        .cell {
+            border: 1px solid black;
+            background-color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .locked {
+            background-color: #ddd;
+            font-weight: bold;
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .choice {
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            width: 80px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .B {
+            background-color: #1abc9c;
+        }
+
+        .C {
+            background-color: #3498db;
+        }
+
+        .D {
+            background-color: #9b59b6;
+        }
+
+        .E {
+            background-color: #e67e22;
+        }
+
+        .F {
+            background-color: #e74c3c;
+        }
+
+        .G {
+            background-color: #2ecc71;
+        }
+
+        .L {
+            background-color: #34495e;
+        }
+
+        .K {
+            background-color: #f1c40f;
+            color: black;
+        }
+
+        .I {
+            background-color: #7f8c8d;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container py-4">
+        <div class="text-center mb-4">
+            <h1>MENGENAL HURUF</h1>
+            <h4>Skor: <span id="score">0</span></h4>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="board" id="gameBoard">
+                    <!-- Baris 1 -->
+                    <div class="cell locked" data-key="B">B</div>
+                    <div class="cell" data-key="B" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="cell" data-key="B" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                    <!-- Baris 2 -->
+                    <div class="cell locked" data-key="C">C</div>
+                    <div class="cell" data-key="C" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="cell" data-key="C" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                    <!-- Baris 3 -->
+                    <div class="cell locked" data-key="D">D</div>
+                    <div class="cell" data-key="D" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="cell" data-key="D" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+                    <!-- Baris 4 -->
+                    <div class="cell locked" data-key="E">E</div>
+                    <div class="cell" data-key="E" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="cell" data-key="E" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="choices">
+                    <div class="choice B" draggable="true" ondragstart="drag(event)" id="B1">B</div>
+                    <div class="choice C" draggable="true" ondragstart="drag(event)" id="C1">C</div>
+                    <div class="choice D" draggable="true" ondragstart="drag(event)" id="D1">D</div>
+                    <div class="choice B" draggable="true" ondragstart="drag(event)" id="B2">B</div>
+                    <div class="choice C" draggable="true" ondragstart="drag(event)" id="C2">C</div>
+                    <div class="choice B" draggable="true" ondragstart="drag(event)" id="B3">B</div>
+                    <div class="choice E" draggable="true" ondragstart="drag(event)" id="E">E</div>
+                    <div class="choice F" draggable="true" ondragstart="drag(event)" id="F">F</div>
+                    <div class="choice G" draggable="true" ondragstart="drag(event)" id="G">G</div>
+                    <div class="choice L" draggable="true" ondragstart="drag(event)" id="L">L</div>
+                    <div class="choice K" draggable="true" ondragstart="drag(event)" id="K">K</div>
+                    <div class="choice I" draggable="true" ondragstart="drag(event)" id="I">I</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio -->
+        <audio id="correctSound" src="assets/sounds/correct.mp3"></audio>
+        <audio id="wrongSound" src="assets/sounds/wrong.mp3"></audio>
+    </main>
+
+    <script>
+        let score = 0;
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const dragged = document.getElementById(data);
+            const cell = ev.target;
+
+            const droppedLetter = dragged.innerText.trim();
+            const expectedKey = cell.getAttribute("data-key");
+
+            if (cell.innerHTML.trim() === "" && droppedLetter === expectedKey) {
+                cell.appendChild(dragged);
+                cell.style.backgroundColor = "#90ee90"; // hijau
+                document.getElementById("correctSound").play();
+
+                // Tambah skor
+                score += 10;
+                document.getElementById("score").innerText = score;
+            } else {
+                document.getElementById("wrongSound").play();
+                alert("Huruf salah atau tidak boleh di-drop di sini!");
+            }
+        }
+    </script>
+
+</body>
+
+</html>
