@@ -37,7 +37,6 @@
         .locked {
             background-color: #ddd;
             font-weight: bold;
-
         }
 
         .choices {
@@ -86,6 +85,40 @@
         .N {
             background-color: #82cc2e;
         }
+
+        /* Modal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -93,6 +126,14 @@
     <main>
         <div class="container">
             <div class="row justify-content-center align-items-center mt-5">
+                <!-- Modal -->
+                <div id="popupModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <p id="popupMessage"></p>
+                    </div>
+                </div>
+
                 <div class="d-flex flex-wrap align-items-center justify-content-between w-100">
                     <div class="gambar-wrapper" onclick="toggleMute()">
                         <img src="assets/icon/high-volume.png" alt="Volume" width="50vh" class="gambar-shadow"
@@ -193,11 +234,6 @@
         </div>
     </main>
 
-    <!-- Pop-up Notification -->
-    <div id="notification" class="alert" style="position: fixed; bottom: 10px; right: 10px; display: none;">
-        <strong id="notification-message"></strong>
-    </div>
-
     <script>
         let score = 0;
 
@@ -223,6 +259,9 @@
                 cell.style.backgroundColor = "#90ee90"; // hijau
                 document.getElementById("correctSound").play();
 
+                // Show notification and play audio
+                showModal("Selamat! Huruf yang Anda pilih benar!");
+
                 // Tambah skor
                 score += 100;
                 document.getElementById("score").innerText = score / 12;
@@ -230,6 +269,22 @@
                 document.getElementById("wrongSound").play();
                 alert("Huruf salah atau tidak boleh di-drop di sini!");
             }
+        }
+
+        // Show the pop-up modal
+        function showModal(message) {
+            const modal = document.getElementById("popupModal");
+            const messageElement = document.getElementById("popupMessage");
+            const audio = new Audio('assets/sounds/pop-up-sound.mp3'); // Example of pop-up sound
+            messageElement.innerText = message;
+            modal.style.display = "block";
+            audio.play(); // Play the sound
+        }
+
+        // Close the modal
+        function closeModal() {
+            const modal = document.getElementById("popupModal");
+            modal.style.display = "none";
         }
     </script>
 

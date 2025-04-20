@@ -94,12 +94,21 @@
             border-radius: 10px;
         }
 
+        /* Updated Pop-up Notification Style */
         #notification {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: none;
             z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+            width: 60%;
         }
     </style>
 </head>
@@ -120,7 +129,7 @@
                         Browser Anda tidak mendukung elemen audio.
                     </audio>
 
-                    <h1 class="mx-auto">MENGENAL HURUF</h1>
+                    <h1 class="mx-auto">GAME SUSUN HURUF</h1>
 
                     <a href="javascript:history.back()">
                         <div class="gambar-wrapper">
@@ -176,111 +185,106 @@
     </main>
 
     <!-- Pop-up Notification -->
-    <div id="notification" class="alert" style="position: fixed; bottom: 10px; right: 10px; display: none;">
+    <div id="notification" class="alert">
         <strong id="notification-message"></strong>
     </div>
+
+    <div id="gameOverMessage" class="game-over" style="display:none;">
+        <h2>Game Over!</h2>
+        <p>Waktu habis. Skor akhir: <span id="finalScore"></span></p>
+    </div>
+
 
     <script>
         // Daftar soal game susun huruf
         const questions = [
             {
-                image: 'assets/img/apel.png',
-                word: 'APEL',
-                hint: 'Nama buah berwarna merah'
+                image: 'assets/game/batu.png',
+                word: 'BATU',
+                hint: 'Lapisan keras yang ditemukan di alam'
             },
             {
-                image: 'assets/img/bola.png',
-                word: 'BOLA',
-                hint: 'Alat untuk bermain yang dapat dipantulkan'
+                image: 'assets/game/buku.png',
+                word: 'BUKU',
+                hint: 'Kumpulan kertas yang berisi tulisan atau gambar'
             },
             {
-                image: 'assets/img/kupu.png',
-                word: 'KUPU',
-                hint: 'Serangga bersayap indah yang terbang di siang hari'
-            }
+                image: 'assets/game/dadu.png',
+                word: 'DADU',
+                hint: 'Alat permainan yang berbentuk kubus dengan angka'
+            },
+            {
+                image: 'assets/game/dasi.png',
+                word: 'DASI',
+                hint: 'Aksesoris yang dikenakan di leher untuk penampilan formal'
+            },
+            {
+                image: 'assets/game/madu.png',
+                word: 'MADU',
+                hint: 'Pemanis alami yang dihasilkan oleh lebah'
+            },
+            {
+                image: 'assets/game/mata.png',
+                word: 'MATA',
+                hint: 'Panca indera yang digunakan untuk melihat'
+            },
+            {
+                image: 'assets/game/nada.png',
+                word: 'NADA',
+                hint: 'Suara yang dihasilkan oleh alat musik atau suara manusia'
+            },
+            {
+                image: 'assets/game/nasi.png',
+                word: 'NASI',
+                hint: 'Makanan pokok yang terbuat dari beras yang dimasak'
+            },
+            {
+                image: 'assets/game/padi.png',
+                word: 'PADI',
+                hint: 'Beras yang belum dipanen'
+            },
+            {
+                image: 'assets/game/pita.png',
+                word: 'PITA',
+                hint: 'Tali yang digunakan untuk mengikat atau menghias'
+            },
         ];
 
         let currentQuestionIndex = 0;
         let selectedLetters = [];
-        let timeLeft = 60;
+        let timeLeft = 300;
         let score = 0;
         let timerInterval;
 
         // Fungsi untuk mengacak huruf
         function shuffleLetters(word) {
-            return word.split('').sort(() => Math.random() - 0.5);
+            return word.split('').sort(() => Math.random() - 0.5);  // Pengacakan huruf
         }
+
+        // Fungsi untuk mengakhiri permainan
+        function endGame() {
+            clearInterval(timerInterval);  // Hentikan timer
+            document.getElementById('gameOverMessage').style.display = 'block';  // Tampilkan pesan Game Over
+            document.getElementById('finalScore').textContent = score;  // Tampilkan skor akhir
+            document.getElementById('gameContainer').style.display = 'none';  // Sembunyikan elemen game
+        }
+
 
         // Fungsi untuk memulai timer
         function startTimer() {
             const timerElement = document.getElementById('timer');
-            clearInterval(timerInterval); // Pastikan tidak ada interval yang berjalan sebelumnya
-            timeLeft = 60;
+            clearInterval(timerInterval);
+            timeLeft = 300;  // Atur ulang waktu
             timerInterval = setInterval(() => {
                 timeLeft--;
                 timerElement.textContent = `Waktu: ${timeLeft}`;
 
                 if (timeLeft <= 0) {
-                    endGame();
+                    endGame();  // Panggil endGame ketika waktu habis
                 }
             }, 1000);
         }
 
-        // Fungsi untuk mengakhiri permainan
-        function endGame() {
-            clearInterval(timerInterval);
-
-            // Sembunyikan elemen game
-            const gameContainer = document.getElementById('gameContainer');
-            gameContainer.innerHTML = `
-                <div class="col-12 game-over">
-                    <h2>Game Over!</h2>
-                    <p>Skor Anda: ${score}</p>
-                    <button onclick="restartGame()" class="btn btn-primary">Mulai Ulang</button>
-                </div>
-            `;
-        }
-
-        // Fungsi untuk memulai ulang permainan
-        function restartGame() {
-            // Kembalikan elemen game ke kondisi awal
-            const gameContainer = document.getElementById('gameContainer');
-            gameContainer.innerHTML = `
-                <div class="col-12" id="game-stats">
-                    <div id="timer">Waktu: 60</div>
-                    <div id="score">Skor: 0</div>
-                </div>
-
-                <div class="col-12">
-                    <img id="gameImage" src="" alt="Gambar" class="mb-4" style="max-width: 300px; max-height: 300px;">
-                </div>
-                
-                <div class="col-12 mb-3">
-                    <div id="wordDropBoxes" class="word-box">
-                        <!-- Drop boxes for letters will be added dynamically -->
-                    </div>
-                </div>
-                
-                <div class="col-12">
-                    <div id="letterChoices" class="letter-choices">
-                        <!-- Letter choices will be added dynamically -->
-                    </div>
-                </div>
-                
-                <div class="col-12">
-                    <button id="checkButton" class="btn btn-primary btn-submit" onclick="checkAnswer()">Periksa Jawaban</button>
-                </div>
-            `;
-
-            // Reset variabel
-            currentQuestionIndex = 0;
-            score = 0;
-            selectedLetters = [];
-
-            // Mulai ulang game
-            startGame();
-            startTimer();
-        }
 
         // Fungsi untuk memulai permainan
         function startGame() {
@@ -319,7 +323,6 @@
 
         // Fungsi untuk memilih huruf
         function selectLetter(letterBox) {
-            // Cari kotak drop kosong pertama
             const emptyDropBox = document.querySelector('.letter-drop-box:empty');
 
             if (emptyDropBox && !letterBox.classList.contains('used')) {
@@ -365,6 +368,38 @@
                 }
             });
 
+            // Function to play sound
+            function playSound() {
+                const sound = new Audio('assets/sounds/pop-up-sound.wav');
+                sound.play();
+            }
+
+            // Show notification with pop-up sound
+            function showNotification(message, isCorrect) {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notification-message');
+
+                notificationMessage.textContent = message;
+                notification.style.display = 'block';
+
+                // Play sound when notification appears
+                playSound();
+
+                if (isCorrect) {
+                    notification.classList.remove('alert-danger');
+                    notification.classList.add('alert-success');
+                } else {
+                    notification.classList.remove('alert-success');
+                    notification.classList.add('alert-danger');
+                }
+
+                // Hide notification after 2 seconds
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 2000);
+            }
+
+
             // Tampilkan notifikasi
             const notification = document.getElementById('notification');
             const notificationMessage = document.getElementById('notification-message');
@@ -378,19 +413,27 @@
                 notification.classList.remove('alert-danger');
                 notification.classList.add('alert-success');
 
+                // Play sound for correct answer
+                const correctSound = new Audio('assets/sounds/correct.wav');
+                correctSound.play();
+
                 // Lanjut ke soal berikutnya
                 setTimeout(() => {
-                    currentQuestionIndex++;
+                    currentQuestionIndex++;  // Pindah ke soal berikutnya
                     if (currentQuestionIndex < questions.length) {
-                        startGame();
+                        startGame();  // Mulai soal baru
                     } else {
-                        endGame();
+                        endGame();  // Akhiri permainan jika soal habis
                     }
-                }, 2000);
+                }, 2000);  // Delay 2 detik sebelum lanjut ke soal berikutnya
             } else {
                 notificationMessage.textContent = 'Maaf, jawaban Anda salah. Coba lagi!';
                 notification.classList.remove('alert-success');
                 notification.classList.add('alert-danger');
+
+                // Play sound for incorrect answer
+                const incorrectSound = new Audio('assets/sounds/incorrect.wav');
+                incorrectSound.play();
             }
 
             notification.style.display = 'block';
@@ -410,7 +453,7 @@
 
                     selectedLetters = [];
                 }
-            }, 2000);
+            }, 2000);  // Menunggu 2 detik sebelum mengatur ulang tampilan jika jawaban salah
         }
 
         // Fungsi toggle mute
