@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/style.css" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 library -->
     <style>
         .letter-box {
             display: inline-block;
@@ -93,23 +93,6 @@
             background-color: #f8d7da;
             border-radius: 10px;
         }
-
-        /* Updated Pop-up Notification Style */
-        #notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.75);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 18px;
-            text-align: center;
-            width: 60%;
-        }
     </style>
 </head>
 
@@ -123,7 +106,6 @@
                             id="volumeImage">
                     </div>
 
-                    <!-- Background Music -->
                     <audio id="audioPlayerbg" autoplay loop>
                         <source src="assets/music/bg.wav" type="audio/wav">
                         Browser Anda tidak mendukung elemen audio.
@@ -184,16 +166,10 @@
         </div>
     </main>
 
-    <!-- Pop-up Notification -->
-    <div id="notification" class="alert">
-        <strong id="notification-message"></strong>
-    </div>
-
     <div id="gameOverMessage" class="game-over" style="display:none;">
         <h2>Game Over!</h2>
         <p>Waktu habis. Skor akhir: <span id="finalScore"></span></p>
     </div>
-
 
     <script>
         // Daftar soal game susun huruf
@@ -269,7 +245,6 @@
             document.getElementById('gameContainer').style.display = 'none';  // Sembunyikan elemen game
         }
 
-
         // Fungsi untuk memulai timer
         function startTimer() {
             const timerElement = document.getElementById('timer');
@@ -284,7 +259,6 @@
                 }
             }, 1000);
         }
-
 
         // Fungsi untuk memulai permainan
         function startGame() {
@@ -353,6 +327,12 @@
             }
         }
 
+        // Function to play sound
+        function playSound(isCorrect) {
+            const sound = new Audio(isCorrect ? 'assets/voice/game/jawaban-benar.m4a' : 'assets/voice/game/jawaban-salah.m4a');
+            sound.play();
+        }
+
         // Fungsi untuk memeriksa jawaban
         function checkAnswer() {
             const currentQuestion = questions[currentQuestionIndex];
@@ -368,92 +348,60 @@
                 }
             });
 
-            // Function to play sound
-            function playSound() {
-                const sound = new Audio('assets/sounds/pop-up-sound.wav');
-                sound.play();
-            }
+            // Show SweetAlert instead of the old notification
+            showNotification(isCorrect ? 'Jawaban Anda benar!' : 'Jawaban Anda salah, coba lagi!', isCorrect);
 
-            // Show notification with pop-up sound
+            // Play sound based on correctness
+            playSound(isCorrect);
+
+            // Tampilkan notifikasi menggunakan SweetAlert
             function showNotification(message, isCorrect) {
-                const notification = document.getElementById('notification');
-                const notificationMessage = document.getElementById('notification-message');
-
-                notificationMessage.textContent = message;
-                notification.style.display = 'block';
-
-                // Play sound when notification appears
-                playSound();
-
                 if (isCorrect) {
-                    notification.classList.remove('alert-danger');
-                    notification.classList.add('alert-success');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Selamat!',
+                        text: message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 } else {
-                    notification.classList.remove('alert-success');
-                    notification.classList.add('alert-danger');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Maaf!',
+                        text: message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
-
-                // Hide notification after 2 seconds
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 2000);
             }
 
-
-            // Tampilkan notifikasi
-            const notification = document.getElementById('notification');
-            const notificationMessage = document.getElementById('notification-message');
-
+            // Lanjutkan ke soal berikutnya jika jawaban benar
             if (isCorrect) {
-                // Tambah skor
                 score += 10;
                 document.getElementById('score').textContent = `Skor: ${score}`;
 
-                notificationMessage.textContent = 'Selamat! Jawaban Anda benar.';
-                notification.classList.remove('alert-danger');
-                notification.classList.add('alert-success');
-
-                // Play sound for correct answer
-                const correctSound = new Audio('assets/sounds/correct.wav');
-                correctSound.play();
-
                 // Lanjut ke soal berikutnya
                 setTimeout(() => {
-                    currentQuestionIndex++;  // Pindah ke soal berikutnya
+                    currentQuestionIndex++;
                     if (currentQuestionIndex < questions.length) {
-                        startGame();  // Mulai soal baru
+                        startGame();
                     } else {
-                        endGame();  // Akhiri permainan jika soal habis
+                        endGame();
                     }
-                }, 2000);  // Delay 2 detik sebelum lanjut ke soal berikutnya
+                }, 2000);  // Delay sebelum lanjut ke soal berikutnya
             } else {
-                notificationMessage.textContent = 'Maaf, jawaban Anda salah. Coba lagi!';
-                notification.classList.remove('alert-success');
-                notification.classList.add('alert-danger');
+                // Reset kotak huruf jika jawaban salah
+                dropBoxes.forEach(box => {
+                    box.textContent = '';
+                    box.classList.remove('incorrect-letter', 'correct-letter');
+                });
 
-                // Play sound for incorrect answer
-                const incorrectSound = new Audio('assets/sounds/incorrect.wav');
-                incorrectSound.play();
+                selectedLetters.forEach(item => {
+                    item.element.classList.remove('used');
+                });
+
+                selectedLetters = [];
             }
-
-            notification.style.display = 'block';
-            setTimeout(() => {
-                notification.style.display = 'none';
-
-                // Reset warna dan huruf jika salah
-                if (!isCorrect) {
-                    dropBoxes.forEach(box => {
-                        box.textContent = '';
-                        box.classList.remove('incorrect-letter', 'correct-letter');
-                    });
-
-                    selectedLetters.forEach(item => {
-                        item.element.classList.remove('used');
-                    });
-
-                    selectedLetters = [];
-                }
-            }, 2000);  // Menunggu 2 detik sebelum mengatur ulang tampilan jika jawaban salah
         }
 
         // Fungsi toggle mute

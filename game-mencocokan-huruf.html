@@ -12,6 +12,9 @@
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/style.css" rel="stylesheet">
 
+    <!-- SweetAlert2 Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         .board {
             display: grid;
@@ -126,14 +129,6 @@
     <main>
         <div class="container">
             <div class="row justify-content-center align-items-center mt-5">
-                <!-- Modal -->
-                <div id="popupModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <p id="popupMessage"></p>
-                    </div>
-                </div>
-
                 <div class="d-flex flex-wrap align-items-center justify-content-between w-100">
                     <div class="gambar-wrapper" onclick="toggleMute()">
                         <img src="assets/icon/high-volume.png" alt="Volume" width="50vh" class="gambar-shadow"
@@ -228,14 +223,18 @@
                 </div>
 
                 <!-- Audio -->
-                <audio id="correctSound" src="assets/sounds/correct.mp3"></audio>
-                <audio id="wrongSound" src="assets/sounds/wrong.mp3"></audio>
+                <audio id="correctSound" src="assets/voice/game/jawaban-benar.m4a"></audio>
+                <audio id="wrongSound" src="assets/voice/game/jawaban-salah.m4a"></audio>
             </div>
         </div>
     </main>
 
     <script>
         let score = 0;
+
+        // Create sound elements for correct and wrong answers
+        const correctSound = new Audio('assets/voice/game/jawaban-benar.m4a');
+        const wrongSound = new Audio('assets/voice/game/jawaban-salah.m4a');
 
         function allowDrop(ev) {
             ev.preventDefault();
@@ -257,34 +256,43 @@
             if (cell.innerHTML.trim() === "" && droppedLetter === expectedKey) {
                 cell.appendChild(dragged);
                 cell.style.backgroundColor = "#90ee90"; // hijau
-                document.getElementById("correctSound").play();
-
-                // Show notification and play audio
-                showModal("Selamat! Huruf yang Anda pilih benar!");
+                document.getElementById("correctSound").play();  // Play correct sound
+                correctSound.play();
+                // Show SweetAlert notification for correct answer
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Selamat!',
+                    text: 'Huruf yang Anda pilih benar!',
+                })
 
                 // Tambah skor
                 score += 100;
                 document.getElementById("score").innerText = score / 12;
             } else {
-                document.getElementById("wrongSound").play();
-                alert("Huruf salah atau tidak boleh di-drop di sini!");
+                // Play wrong sound
+                wrongSound.play();
+
+                // Show SweetAlert error notification for wrong answer
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Huruf salah atau tidak boleh di-drop di sini!',
+                })
             }
         }
 
-        // Show the pop-up modal
-        function showModal(message) {
-            const modal = document.getElementById("popupModal");
-            const messageElement = document.getElementById("popupMessage");
-            const audio = new Audio('assets/sounds/pop-up-sound.mp3'); // Example of pop-up sound
-            messageElement.innerText = message;
-            modal.style.display = "block";
-            audio.play(); // Play the sound
-        }
+        // Function to toggle mute/unmute
+        function toggleMute() {
+            const audioPlayer = document.getElementById("audioPlayerbg");
+            const volumeImage = document.getElementById("volumeImage");
 
-        // Close the modal
-        function closeModal() {
-            const modal = document.getElementById("popupModal");
-            modal.style.display = "none";
+            if (audioPlayer.muted) {
+                audioPlayer.muted = false;
+                volumeImage.src = "assets/icon/high-volume.png"; // Volume ON icon
+            } else {
+                audioPlayer.muted = true;
+                volumeImage.src = "assets/icon/low-volume.png"; // Volume MUTE icon
+            }
         }
     </script>
 
