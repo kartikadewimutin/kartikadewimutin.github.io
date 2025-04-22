@@ -30,7 +30,7 @@
                     </div>
                     <!-- Background Music -->
                     <audio id="audioPlayerbg" autoplay loop>
-                        <source src="assets/music/bg.wav" type="audio/mp3">
+                        <source src="assets/music/bg-2.mp3" type="audio/mp3">
                         Browser Anda tidak mendukung elemen audio.
                     </audio>
                     <h1 class="mx-auto">KATA P</h1>
@@ -84,6 +84,9 @@
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Atur volume background music ke 50%
+        const audioPlayerbg = document.getElementById('audioPlayerbg');
+        audioPlayerbg.volume = 0.1; // 50% volume
         // Array berisi nama gambar dan musik yang terkait
         const images = [
             { img: 'assets/kata/p1.png', audio: 'assets/voice/kata/pola.m4a' },//

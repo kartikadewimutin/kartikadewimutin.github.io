@@ -137,7 +137,7 @@
 
                     <!-- Background Music -->
                     <audio id="audioPlayerbg" autoplay loop>
-                        <source src="assets/music/bg.wav" type="audio/wav">
+                        <source src="assets/music/bg-5.mp3" type="audio/wav">
                         Browser Anda tidak mendukung elemen audio.
                     </audio>
 
@@ -230,6 +230,9 @@
     </main>
 
     <script>
+        // Atur volume background music ke 50%
+        const audioPlayerbg = document.getElementById('audioPlayerbg');
+        audioPlayerbg.volume = 0.1; // 50% volume
         let score = 0;
 
         // Create sound elements for correct and wrong answers
@@ -257,7 +260,7 @@
                 cell.appendChild(dragged);
                 cell.style.backgroundColor = "#90ee90"; // hijau
                 document.getElementById("correctSound").play();  // Play correct sound
-                correctSound.play();
+
                 // Show SweetAlert notification for correct answer
                 Swal.fire({
                     icon: 'success',
@@ -276,7 +279,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Huruf salah atau tidak boleh di-drop di sini!',
+                    text: 'Jawabanmu kurang tepat!',
                 })
             }
         }

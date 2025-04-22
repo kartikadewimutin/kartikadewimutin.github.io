@@ -107,7 +107,7 @@
                     </div>
 
                     <audio id="audioPlayerbg" autoplay loop>
-                        <source src="assets/music/bg.wav" type="audio/wav">
+                        <source src="assets/music/bg-4.mp3" type="audio/wav">
                         Browser Anda tidak mendukung elemen audio.
                     </audio>
 
@@ -172,6 +172,9 @@
     </div>
 
     <script>
+        // Atur volume background music ke 50%
+        const audioPlayerbg = document.getElementById('audioPlayerbg');
+        audioPlayerbg.volume = 0.1; // 50% volume
         // Daftar soal game susun huruf
         const questions = [
             {
@@ -349,7 +352,7 @@
             });
 
             // Show SweetAlert instead of the old notification
-            showNotification(isCorrect ? 'Jawaban Anda benar!' : 'Jawaban Anda salah, coba lagi!', isCorrect);
+            showNotification(isCorrect ? 'Jawaban Anda benar!' : 'Jawabanmu kurang tepat!', isCorrect);
 
             // Play sound based on correctness
             playSound(isCorrect);
